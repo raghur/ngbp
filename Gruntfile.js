@@ -597,7 +597,7 @@ module.exports = function ( grunt ) {
    */
   function filterForCSS ( files ) {
     return files.filter( function ( file ) {
-      return file.match( /\.css$/ );
+        return file.match(/^(?=.*.css)((?!vendor).)*$/);
     });
   }
 
