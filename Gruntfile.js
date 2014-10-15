@@ -18,7 +18,6 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
-  grunt.loadNpmTasks('grunt-open');
   grunt.loadNpmTasks('grunt-express');
   /**
    * Load in our build configuration file.
@@ -197,7 +196,9 @@ module.exports = function ( grunt ) {
                 port: 9000,
                 hostname: "0.0.0.0",
                 bases: [serve],
-                livereload: true
+                livereload: true,
+                //serverreload: true,
+                open:true
                 // Replace with the directory you want the files served from
                 // Make sure you don't use `.` or `..` in the path as Express
                 // is likely to return 403 Forbidden responses if you do
@@ -206,13 +207,6 @@ module.exports = function ( grunt ) {
         }
     },
 
-    // grunt-open will open your browser at the project's URL
-    open: {
-        all: {
-            // Gets the port from the connect configuration
-            path: 'http://localhost:<%= express.all.options.port%>'
-        }
-    },
     /**
      * `grunt coffee` compiles the CoffeeScript sources. To work well with the
      * rest of the build, we have a separate compilation task for sources and
@@ -563,8 +557,7 @@ module.exports = function ( grunt ) {
   grunt.registerTask('serve', [
       serve == userConfig.build_dir ? 'build' : 'default',
       'express',
-      'open',
-      'delta'
+      'express-keepalive'
   ]);
   /**
    * In order to make it safe to just compile or copy *only* what was changed,
