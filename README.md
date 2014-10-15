@@ -1,3 +1,21 @@
+# Changes in my fork
+
+Branch to use: dev
+
+1. `serve` task launches express server on port 9000
+    ```
+        # dev build
+        grunt serve
+
+        # release (minified)
+        grunt serve --release
+    ```
+2. `uglify` task upgraded and concatenates and minifies. Source map support is built in. Sources are embedded in the source map to avoid
+path dependencies at the cost of larger sized source maps.
+3. Vendor js and user js scripts are split into separate files. Vendor js files will rarely change - keeping this as a separate
+download allows for better caching since only user js files need to downloaded on the client most of the times.
+
+
 # [ngBoilerplate](http://joshdmiller.github.com/ng-boilerplate) [![Build Status](https://api.travis-ci.org/ngbp/ngbp.png?branch=v0.3.2-release)](https://travis-ci.org/ngbp/ngbp)
 
 An opinionated kickstarter for [AngularJS](http://angularjs.org) projects.
