@@ -230,22 +230,34 @@ module.exports = function ( grunt ) {
      * Minify the sources!
      */
     uglify: {
-      compile: {
-        options: {
-          banner: '<%= meta.banner %>',
-          sourceMap: true,
-          sourceMapIncludeSources: true
+        compile_app : {
+            options: {
+                banner: '<%= meta.banner %>',
+                sourceMap: true,
+                sourceMapIncludeSources: true,
+                enclose: {
+                    'window': 'window',
+                    'window.angular': 'angular'
+                }
+            },
+            files: {
+                '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.min.js': [ 
+                    '<%= build_dir %>/src/**/*.js', 
+                    '<%= html2js.app.dest %>', 
+                    '<%= html2js.common.dest %>'
+                ]
+            }
         },
-        files: {
-          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.min.js': [ 
-              '<%= build_dir %>/src/**/*.js', 
-              '<%= html2js.app.dest %>', 
-              '<%= html2js.common.dest %>'
-          ],
-          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.vendor.min.js': [ '<%= vendor_files.js %>' ]
-
+        compile_vendor_js: {
+            options: {
+                banner: '<%= meta.banner %>',
+                sourceMap: true,
+                sourceMapIncludeSources: true
+            },
+            files: {
+                '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.vendor.min.js': [ '<%= vendor_files.js %>' ]
+            }
         }
-      }
     },
 
     /**
