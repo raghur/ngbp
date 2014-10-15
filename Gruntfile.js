@@ -165,24 +165,6 @@ module.exports = function ( grunt ) {
           '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
         ],
         dest: '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
-      },
-      /**
-       * The `compile_js` target is the concatenation of our application source
-       * code and all specified vendor source code into a single file.
-       */
-      compile_js: {
-        options: {
-          banner: '<%= meta.banner %>'
-        },
-        src: [ 
-          '<%= vendor_files.js %>', 
-          'module.prefix', 
-          '<%= build_dir %>/src/**/*.js', 
-          '<%= html2js.app.dest %>', 
-          '<%= html2js.common.dest %>', 
-          'module.suffix' 
-        ],
-        dest: '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.js'
       }
     },
 
@@ -229,10 +211,18 @@ module.exports = function ( grunt ) {
     uglify: {
       compile: {
         options: {
-          banner: '<%= meta.banner %>'
+          banner: '<%= meta.banner %>',
+          sourceMap: true,
+          sourceMapIncludeSources: true
         },
         files: {
-          '<%= concat.compile_js.dest %>': '<%= concat.compile_js.dest %>'
+          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.min.js': [ 
+              '<%= build_dir %>/src/**/*.js', 
+              '<%= html2js.app.dest %>', 
+              '<%= html2js.common.dest %>'
+          ],
+          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.vendor.min.js': [ '<%= vendor_files.js %>' ]
+
         }
       }
     },
@@ -385,7 +375,8 @@ module.exports = function ( grunt ) {
       compile: {
         dir: '<%= compile_dir %>',
         src: [
-          '<%= concat.compile_js.dest %>',
+            '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.vendor.min.js',
+            '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.min.js',
           '<%= vendor_files.css %>',
           '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
         ]
@@ -563,7 +554,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'less:compile', 'copy:compile_assets', 'ngmin', 'concat:compile_js', 'uglify', 'index:compile'
+    'less:compile', 'copy:compile_assets', 'ngmin', 'uglify', 'index:compile'
   ]);
 
   /**
