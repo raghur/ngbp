@@ -18,12 +18,15 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-karma');
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
-
+  grunt.loadNpmTasks('grunt-open');
+  grunt.loadNpmTasks('grunt-express');
   /**
    * Load in our build configuration file.
    */
   var userConfig = require( './build.config.js' );
 
+  var serve = userConfig.build_dir;
+  serve = grunt.option('release') ? userConfig.compile_dir : serve;
   /**
    * This is the configuration object Grunt uses to give each plugin its 
    * instructions.
@@ -186,6 +189,30 @@ module.exports = function ( grunt ) {
       }
     },
 
+    // grunt-express will serve the files from the folders listed in `bases`
+    // on specified `port` and `hostname`
+    express: {
+        all: {
+            options: {
+                port: 9000,
+                hostname: "0.0.0.0",
+                bases: [serve],
+                livereload: true
+                // Replace with the directory you want the files served from
+                // Make sure you don't use `.` or `..` in the path as Express
+                // is likely to return 403 Forbidden responses if you do
+                // http://stackoverflow.com/questions/14594121/express-res-sendfile-throwing-forbidden-error
+            }
+        }
+    },
+
+    // grunt-open will open your browser at the project's URL
+    open: {
+        all: {
+            // Gets the port from the connect configuration
+            path: 'http://localhost:<%= express.all.options.port%>'
+        }
+    },
     /**
      * `grunt coffee` compiles the CoffeeScript sources. To work well with the
      * rest of the build, we have a separate compilation task for sources and
@@ -533,6 +560,12 @@ module.exports = function ( grunt ) {
 
   grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
 
+  grunt.registerTask('serve', [
+      serve == userConfig.build_dir ? 'build' : 'default',
+      'express',
+      'open',
+      'delta'
+  ]);
   /**
    * In order to make it safe to just compile or copy *only* what was changed,
    * we need to ensure we are starting from a clean, fresh build. So we rename
