@@ -19,6 +19,7 @@ module.exports = function ( grunt ) {
   grunt.loadNpmTasks('grunt-ngmin');
   grunt.loadNpmTasks('grunt-html2js');
   grunt.loadNpmTasks('grunt-express');
+  grunt.loadNpmTasks('grunt-filerev');
   /**
    * Load in our build configuration file.
    */
@@ -260,6 +261,15 @@ module.exports = function ( grunt ) {
         }
     },
 
+    filerev: {
+        options: {
+            algorithm: 'md5',
+            length: 8
+        },
+        assets: {
+            src: '<%= compile_dir %>/assets/**/*.{js,css}'
+        }
+    },
     /**
      * `grunt-contrib-less` handles our LESS compilation and uglification automatically.
      * Only our `main.less` file is included in compilation; all other files
@@ -408,10 +418,9 @@ module.exports = function ( grunt ) {
       compile: {
         dir: '<%= compile_dir %>',
         src: [
-            '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.vendor.min.js',
-            '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.min.js',
+          '<%= compile_dir %>/assets/**/*.js',
           '<%= vendor_files.css %>',
-          '<%= build_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>.css'
+          '<%= compile_dir %>/assets/<%= pkg.name %>-<%= pkg.version %>*.css'
         ]
       }
     },
@@ -592,7 +601,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'less:compile', 'copy:compile_assets', 'ngmin', 'uglify', 'index:compile'
+    'less:compile', 'copy:compile_assets', 'ngmin', 'uglify', 'filerev', 'index:compile'
   ]);
 
   /**
@@ -627,6 +636,11 @@ module.exports = function ( grunt ) {
     var cssFiles = filterForCSS( this.filesSrc ).map( function ( file ) {
       return file.replace( dirRE, '' );
     });
+    //if (grunt.filerev) {
+        //console.log(this.filesSrc);
+        //console.log(jsFiles);
+        //console.log(grunt.filerev.summary);
+    //}
 
     grunt.file.copy('src/index.html', this.data.dir + '/index.html', { 
       process: function ( contents, path ) {
