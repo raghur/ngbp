@@ -568,7 +568,7 @@ module.exports = function ( grunt ) {
   grunt.initConfig( grunt.util._.extend( taskConfig, userConfig ) );
 
   grunt.registerTask('serve', [
-      serve == userConfig.build_dir ? 'build' : 'default',
+      serve == userConfig.build_dir ? 'build' : 'compile',
       'express',
       'express-keepalive'
   ]);
@@ -585,7 +585,7 @@ module.exports = function ( grunt ) {
   /**
    * The default task is to build and compile.
    */
-  grunt.registerTask( 'default', [ 'build', 'compile' ] );
+  grunt.registerTask( 'default', [ 'compile' ] );
 
   /**
    * The `build` task gets your app ready to run for development and testing.
@@ -602,7 +602,7 @@ module.exports = function ( grunt ) {
    * minifying your code.
    */
   grunt.registerTask( 'compile', [
-    'less:compile', 'copy:compile_assets', 'ngmin', 'uglify', 'filerev', 'index:compile'
+    'build', 'less:compile', 'copy:compile_assets', 'ngmin', 'uglify', 'filerev', 'index:compile'
   ]);
 
   /**
